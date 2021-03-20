@@ -56,6 +56,27 @@ def precipitation():
     for date, prcp in prcp_data:
         prcp_dictionary[date] = prcp
 
+    #return a JSON representation of precipitation dictionary
+    return jsonify (prcp_dictionary)
+
+    #close session for next app route
+    session.close()
+
+#create app route for station data
+@app.route("/api/v1.0/stations")
+def stations():
+
+    # Create our session (link) from Python to the database
+    session = Session(engine)
+
+    #Perform query to retrieve station data
+    stations_data = session.query(station.id, station.name, station.station).all()
+
+    #return JSON list of stations from dataset
+    return jsonify(list(stations_data))
+
+    #close session
+    session.close()
 
 
 
