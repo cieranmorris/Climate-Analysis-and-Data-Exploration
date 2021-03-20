@@ -79,6 +79,41 @@ def stations():
     session.close()
 
 
+#create app route for temperature observance data for the most active station of the year
+@app.route("/api/v1.0/tobs")
+def tobs():
+
+    # Create our session (link) from Python to the database
+    session = Session(engine)
+
+    #Perform query to retrieve temperature observance data
+    active_stations = session.query(measurement.station, func.count(measurement.station), station.name).\
+                    order_by(func.count(measurement.station).desc()).\
+                    group_by(measurement.station).all()
+
+    #Specify most active station
+    most_active_station_id = active_stations[0][0]
+
+    #Find latest date, convert to YYYY/MM/DD format and determine date from year previous
+    string_date = session.query(measurement.date).order_by(measurement.date.desc()).first()[0]
+
+    last_date = (dt.datetime.strptime(string_date, "%Y-%m-%d")).date()
+
+    year_prior_date = last_date - dt.timedelta(days = 365)
+
+    #Perform session query for temperature observations for most active station ID and their associated dates
+    temp_observation_data = session.query(measurement.tobs).\
+                        filter((measurement.station == most_active_station_id)\
+                        & (measurement.date <= last_date)\
+                        & (measurement.date >= year_prior_date)).all()
+
+    #Return a JSON of temperature observations (TOBS) for the previous year
+    return jsonify(list(temp_observation_data))
+
+    #close session
+    session.close()
+
+
 
 
 #Define 'main' behavior
