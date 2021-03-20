@@ -114,6 +114,22 @@ def tobs():
     session.close()
 
 
+#create app routes for starting date and end date from data
+@app.route("/api/v1.0/<start_date>")
+@app.route("/api/v1.0/<start_date>/<end_date>")
+def date(start_date = None, end_date = None):
+
+    # Create our session (link) from Python to the database
+    session = Session(engine)
+
+    #if statement if only one date is entered and range cannot be determined
+    #use func.min/func.avg/func.max functions in this statement
+    if not end_date:
+        alternate = session.query()
+
+
+
+
 
 
 #Define 'main' behavior
