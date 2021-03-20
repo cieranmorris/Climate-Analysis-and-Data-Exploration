@@ -125,12 +125,15 @@ def date(start_date = None, end_date = None):
     #if statement if only one date is entered and range cannot be determined
     #use func.min/func.avg/func.max functions in this statement
     if not end_date:
-        alternate = session.query()
+        alternate = session.query(func.min(measurement.tobs), func.avg(measurement.tobs), func.max(measurement.tobs).\
+                            filter(measurement.date >=start_date).\
+                            filter(measurement.date <=end_date.all()
+        
+        #Return a JSON list of min temperature, avg temperature, and max temperature for provided date range
+        return jsonify(list(alternate))
 
-
-
-
-
+        #close session
+        session.close()
 
 #Define 'main' behavior
 if __name__ == '__main__':
